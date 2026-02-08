@@ -6,7 +6,7 @@
 
 ```bash
 # 1. このリポジトリをクローン
-git clone <this-repo> claude-starter
+git clone https://github.com/ryuka-games/claude-code-starter.git claude-starter
 
 # 2. セットアップスクリプトを実行
 cd claude-starter

@@ -9,18 +9,18 @@ Claude Codeの開発効率を最大化するための設定一式を、新プロ
 ## 決定
 
 ### ディレクトリ構成
-- `template/` - プロジェクトにコピーする本体。`.claude/`配下にCLAUDE.md、settings、hooks、skills、agents、rulesを格納
+- `template/` - プロジェクトにコピーする本体。`.claude/`配下にCLAUDE.md、settings、skillsを格納
 - `docs/` - リファレンスドキュメント、ADR、ガイド
-- `user-global/` - `~/.claude/`に配置する個人グローバル設定
 - `setup.sh` - コピー用スクリプト
 
 ### 言語非依存
 template/内のファイルは特定の言語やフレームワークに依存しない。TODOプレースホルダーでユーザーがカスタマイズする。
 
-### CLAUDE.mdテンプレートの設計方針
-- Boris Chernyの「消したらClaudeがミスするか？NOなら削除」ルールを冒頭に記載
-- Claudeが推測できない情報（ビルドコマンド、特殊な規約）にフォーカス
-- セクション: Tech Stack, Build & Test Commands, Code Style, Architecture, Git Workflow, Gotchas, Security
+### CLAUDE.mdテンプレートの設計方針（Boris Cherny Philosophy）
+- 最小限で始めて使いながら育てる。「とりあえず入れておく」はやらない
+- Build & Test Commands のみ。他のセクションは必要になったらClaude自身に追加させる
+- 「消したらClaudeがミスするか？NOなら削除」ルールを冒頭に記載
+- hooks/rules/agentsは初期テンプレートに含めない（必要時にcustomization.mdを参照して追加）
 
 ## 理由
 - テンプレートリポジトリ方式により、`setup.sh`一発で新プロジェクトにClaude Code設定を導入できる

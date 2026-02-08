@@ -9,30 +9,22 @@ Claude Codeの開発効率を最大化するためのスターターキット・
 
 ## Repository Structure
 
-- `docs/` - リファレンスドキュメント（読み物、直接編集対象ではない）
+- `docs/` - リファレンスドキュメント
   - `productivity-guide.md` - Claude Code全機能の包括的ガイド
   - `boris-cherny-tips.md` - Claude Code創設者Boris Chernyのチーム実践Tips
+  - `adr/` - Architecture Decision Records（設計判断の記録）
+  - `guides/` - 使い方ガイド（プロンプトチートシート、カスタマイズガイド）
 - `template/` - **プロジェクトにコピーする本体**
-  - `template/.claude/` - Claude Code設定一式（CLAUDE.md, settings.json, hooks, skills, agents, rules）
+  - `template/.claude/` - Claude Code設定一式（CLAUDE.md, settings.json, skills）
   - `template/.mcp.json.example` - MCP設定サンプル
   - `template/CLAUDE.local.md.example` - 個人設定サンプル
-- `user-global/` - `~/.claude/`に配置する個人グローバル設定
 - `setup.sh` - テンプレートをプロジェクトにコピーするスクリプト
 
 ## Working Plan
 
 進行中の計画ファイル: `~/.claude/plans/dapper-skipping-duckling.md`
 
-9ステップのロードマップで段階的に構築中。各ステップでユーザー確認を挟む:
-1. CLAUDE.md テンプレート ← 完了
-2. Settings + Hooks（権限とファイル保護）
-3. Rules（セキュリティルール）
-4. Skills（スラッシュコマンド）
-5. Agents（サブエージェント）
-6. サンプルファイル + .gitignore
-7. user-global/（個人グローバル設定）
-8. setup.sh + README.md + docs移動
-9. git init + 最終確認
+テンプレート基盤は完成。次フェーズとしてシステム開発用ワークフロー（調査→開発→リリース）のskills/agents構築を検討中。
 
 ## Conventions
 
