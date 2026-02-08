@@ -157,6 +157,32 @@ disable-model-invocation: true
 注意: 使うツールに合わせてカスタマイズすること。
 ```
 
+### /research を強化する: Deep Research Skill
+
+テンプレートの `/research` は意図的にシンプル（約30行）。本格的な調査パイプラインが必要になったら、外部スキルへの置き換えを検討する。
+
+**[199-biotechnologies/claude-deep-research-skill](https://github.com/199-biotechnologies/claude-deep-research-skill)**
+
+| 項目 | 内容 |
+|------|------|
+| フェーズ | 8段階（SCOPE→PLAN→RETRIEVE→TRIANGULATE→OUTLINE→CRITIQUE→REFINE→PACKAGE） |
+| 実行モード | Quick / Standard / Deep / UltraDeep |
+| 出力形式 | Markdown / HTML / PDF の3形式同時出力 |
+| サイズ | SKILL.md 約33KB |
+
+**導入方法:**
+```bash
+# テンプレートの /research を置き換える
+rm -rf .claude/skills/research/
+git clone https://github.com/199-biotechnologies/claude-deep-research-skill.git
+cp -r claude-deep-research-skill/.claude/skills/deep-research .claude/skills/
+```
+
+**注意点:**
+- SKILL.mdが大きいため、スキル呼び出し時のコンテキスト消費が多い
+- subagentを多数生成するため、実行時間とAPI消費が増える
+- まずテンプレートの `/research` で運用し、不足を感じてから導入するのがBoris思想に沿う
+
 ---
 
 ## Agents を追加する

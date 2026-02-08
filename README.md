@@ -23,6 +23,7 @@ cd claude-starter
 | `.claude/CLAUDE.md` | プロジェクト設定テンプレート。まずビルドコマンドだけ埋める |
 | `.claude/settings.json` | 安全なgitコマンドの自動承認 |
 | `.claude/skills/fix-issue/` | `/fix-issue 1234` でGitHub Issueを修正するスキル |
+| `.claude/skills/research/` | `/research [トピック]` で構造化された調査レポートを作成 |
 | `.mcp.json.example` | MCP接続設定のサンプル |
 | `CLAUDE.local.md.example` | 個人設定のサンプル（git管理外） |
 
@@ -40,5 +41,6 @@ cd claude-starter
 |---------|------|
 | [プロンプト チートシート](docs/guides/prompt-cheatsheet.md) | 場面別の効果的なプロンプト集 |
 | [カスタマイズガイド](docs/guides/customization.md) | hooks/rules/skills/agentsの追加方法 |
+| [調査ベストプラクティス](docs/guides/research-best-practices.md) | AI調査の方法論とSDD（Spec-Driven Development） |
 | [Boris Cherny Tips](docs/boris-cherny-tips.md) | Claude Code創設者のチーム実践Tips |
 | [生産性ガイド](docs/productivity-guide.md) | Claude Code全機能の包括的リファレンス |
