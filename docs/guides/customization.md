@@ -7,21 +7,29 @@
 | やりたいこと | 追加するもの | 詳細 |
 |---|---|:---:|
 | セキュリティルールを強制したい | `.claude/rules/security.md` | [>>](#rules-を追加する) |
+| 特定ファイルだけにルールを適用したい | `.claude/rules/*.md` (paths指定) | [>>](#特定ファイルだけに適用する) |
+| CLAUDE.mdを分割・参照したい | `@path/to/file` imports | [>>](#imports-でファイルを参照する) |
 | 危険なファイル編集をブロックしたい | hooks (PreToolUse) | [>>](#hooks-を追加する) |
+| AIでコードを自動評価したい | hooks (prompt/agent タイプ) | [>>](#hookタイプ) |
 | 繰り返す作業を自動化したい | `.claude/skills/*/SKILL.md` | [>>](#skills-を追加する) |
+| スキルをサブエージェントで実行したい | SKILL.md に `context: fork` | [>>](#skill-frontmatter-フィールド一覧) |
 | 専門的なレビューを自動化したい | `.claude/agents/*.md` | [>>](#agents-を追加する) |
+| スキルやhooksをまとめて配布したい | Plugin System | [>>](./plugins.md) |
 
 ---
 
 ## Rules を追加する
 
-`.claude/rules/*.md` に置いたMarkdownファイルは、毎セッション自動で読み込まれる。
+`.claude/rules/*.md` に置いたMarkdownファイルは、毎セッション自動で読み込まれる。サブディレクトリも再帰的に読み込まれる。
 
 ```
 .claude/rules/
 ├── security.md      # セキュリティルール
 ├── testing.md       # テストの書き方
-└── api-design.md    # API設計規約
+├── frontend/
+│   └── react.md     # React固有のルール
+└── backend/
+    └── api.md       # API設計規約
 ```
 
 ### 例: security.md
@@ -36,10 +44,13 @@
 
 ### 特定ファイルだけに適用する
 
+YAML frontmatterの `paths` フィールドでglobパターンを指定する。
+
 ```markdown
 ---
 paths:
   - "src/api/**/*.ts"
+  - "src/api/**/*.tsx"
 ---
 
 # API Rules
@@ -48,13 +59,65 @@ paths:
 - 標準エラーレスポンス形式を使う
 ```
 
+`paths` がないルールは全ファイルに適用される。
+
+---
+
+## Imports でファイルを参照する
+
+CLAUDE.mdから別ファイルを `@path/to/file` 構文で参照できる。長いCLAUDE.mdを分割するのに有用。
+
+```markdown
+# Project Instructions
+
+プロジェクト概要は @README.md を参照。
+npm コマンドは @package.json を参照。
+
+## 追加ルール
+- git ワークフロー @docs/git-instructions.md
+```
+
+- 相対パスはCLAUDE.mdからの相対位置で解決
+- 再帰的に5階層まで参照可能
+- コードブロック内の `@` は無視される
+- 初回読み込み時に承認ダイアログが表示される
+
 ---
 
 ## Hooks を追加する
 
-Hooksは特定のタイミングで自動実行されるスクリプト。`.claude/settings.json` に設定する。
+Hooksは特定のタイミングで自動実行される処理。`.claude/settings.json` に設定する。CLAUDE.mdのルールは「助言」だが、Hooksは「強制」。
 
-### 例: .envファイルの編集をブロック
+### Hookイベント一覧
+
+| イベント | タイミング |
+|---------|-----------|
+| `SessionStart` | セッション開始・再開時 |
+| `SessionEnd` | セッション終了時 |
+| `UserPromptSubmit` | ユーザーがプロンプト送信後、処理前 |
+| `PreToolUse` | ツール実行前（ブロック可能） |
+| `PostToolUse` | ツール実行成功後 |
+| `PostToolUseFailure` | ツール実行失敗後 |
+| `PermissionRequest` | 権限ダイアログ表示時 |
+| `Notification` | Claude Codeが通知を送信時 |
+| `SubagentStart` | サブエージェント起動時 |
+| `SubagentStop` | サブエージェント終了時 |
+| `Stop` | Claudeの応答完了時 |
+| `TeammateIdle` | Agent Teamsのチームメイトがアイドルになる時 |
+| `TaskCompleted` | タスクが完了マークされる時 |
+| `PreCompact` | コンテキスト圧縮前 |
+
+### Hookタイプ
+
+| タイプ | 説明 | 用途 |
+|--------|------|------|
+| `command` | シェルコマンドを実行。stdinにJSON入力、exit codeで制御 | ファイル保護、フォーマット、通知 |
+| `prompt` | LLM（デフォルトHaiku）で単発評価。`{"ok": true/false, "reason": "..."}` を返す | コード品質チェック、セキュリティ評価 |
+| `agent` | サブエージェントを起動（Read/Grep/Glob使用可、最大50ターン） | 複雑な検証、多段階チェック |
+
+exit code: 0=成功、2=ブロック（処理中断）、その他=非ブロッキングエラー。
+
+### 例: .envファイルの編集をブロック（commandタイプ）
 
 `.claude/hooks/protect-files.sh`:
 ```bash
@@ -74,7 +137,25 @@ fi
     "PreToolUse": [
       {
         "matcher": "Edit|Write",
-        "command": "bash .claude/hooks/protect-files.sh"
+        "hooks": [{ "type": "command", "command": "bash .claude/hooks/protect-files.sh" }]
+      }
+    ]
+  }
+}
+```
+
+### 例: コード品質をLLMで自動評価（promptタイプ）
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [{
+          "type": "prompt",
+          "prompt": "Review this code change for security issues. Return ok=false if you find any vulnerabilities."
+        }]
       }
     ]
   }
@@ -98,11 +179,24 @@ osascript -e 'display notification "タスク完了" with title "Claude Code"'
 
 `.claude/skills/*/SKILL.md` でスラッシュコマンドを作る。
 
-### 例: /review（コードレビュー）
+### Skill Frontmatter フィールド一覧
 
-```
-.claude/skills/review/SKILL.md
-```
+| フィールド | 必須 | 説明 |
+|-----------|:----:|------|
+| `name` | — | 表示名。省略時はディレクトリ名 |
+| `description` | 推奨 | スキルの説明。Claudeが自動起動の判断に使用 |
+| `argument-hint` | — | 補完時に表示されるヒント（例: `[issue-number]`） |
+| `disable-model-invocation` | — | `true` でClaude自動起動を無効化。副作用があるスキルに推奨 |
+| `user-invocable` | — | `false` で `/` メニューから非表示 |
+| `allowed-tools` | — | スキル実行中に許可なしで使えるツール |
+| `model` | — | スキル実行時に使用するモデル |
+| `context` | — | `fork` でサブエージェントコンテキストで実行 |
+| `agent` | — | `context: fork` 時のサブエージェントタイプ |
+| `hooks` | — | スキルのライフサイクルにスコープされたhooks |
+
+引数は `$ARGUMENTS`（全体）、`$ARGUMENTS[0]`（分割）、`${CLAUDE_SESSION_ID}` で参照可能。
+
+### 例: /review（コードレビュー）
 
 ```markdown
 ---
@@ -122,44 +216,28 @@ disable-model-invocation: true
 3. 問題があれば修正案を提示
 ```
 
-### 例: /techdebt（技術的負債の検出）
+### 例: サブエージェントで実行するスキル（context: fork）
 
 ```markdown
 ---
-name: techdebt
-description: 技術的負債を検出する
-disable-model-invocation: true
+name: deep-analyze
+description: コードベースを深く分析する
+context: fork
+agent: general-purpose
+model: opus
 ---
 
-コードベースをスキャンして技術的負債を検出する。
-
-1. TODO/FIXME/HACK コメントを検索
-2. 重複コードを検出
-3. 非推奨APIの使用を検出
-4. 結果をまとめて改善案を提示
+プロジェクト全体を分析して以下をレポートする:
+1. アーキテクチャの概要
+2. 主要な依存関係
+3. 改善が必要な箇所
 ```
 
-### 例: /sync（外部ツール一括取得）
-
-```markdown
----
-name: sync
-description: 外部ツールから最近の情報を一括取得
-disable-model-invocation: true
----
-
-直近7日間の情報を各ツールから取得してまとめる。
-
-1. GitHub: `gh` CLIで最近のIssue/PRを取得
-2. Slack: MCP経由で関連チャンネルの最新メッセージを取得
-3. 結果を要約して現状レポートを作成
-
-注意: 使うツールに合わせてカスタマイズすること。
-```
+`context: fork` を使うとメインのコンテキストウィンドウを消費せずに調査できる。
 
 ### /research を強化する: Deep Research Skill
 
-テンプレートの `/research` は意図的にシンプル（約30行）。本格的な調査パイプラインが必要になったら、外部スキルへの置き換えを検討する。
+テンプレートの `/research` は意図的にシンプル（約65行）。本格的な調査パイプラインが必要になったら、外部スキルへの置き換えを検討する。
 
 **[199-biotechnologies/claude-deep-research-skill](https://github.com/199-biotechnologies/claude-deep-research-skill)**
 
@@ -189,14 +267,31 @@ cp -r claude-deep-research-skill/.claude/skills/deep-research .claude/skills/
 
 `.claude/agents/*.md` で専門的なサブエージェントを定義する。メインのClaudeが必要に応じて起動する。
 
+### Agent Frontmatter フィールド一覧
+
+| フィールド | 必須 | 説明 |
+|-----------|:----:|------|
+| `name` | ○ | 一意の識別子（小文字+ハイフン） |
+| `description` | ○ | いつこのエージェントに委譲すべきかの説明 |
+| `tools` | — | 使用可能なツール。省略時は全ツール継承 |
+| `disallowedTools` | — | 使用禁止ツール |
+| `model` | — | `sonnet`, `opus`, `haiku`, `inherit`。デフォルト: `inherit` |
+| `permissionMode` | — | `default`, `acceptEdits`, `delegate`, `dontAsk`, `bypassPermissions`, `plan` |
+| `maxTurns` | — | 最大ターン数 |
+| `skills` | — | 起動時にプリロードするスキル |
+| `mcpServers` | — | 使用可能なMCPサーバー |
+| `hooks` | — | エージェントにスコープされたhooks |
+| `memory` | — | 永続メモリのスコープ: `user`, `project`, `local` |
+
 ### 例: セキュリティレビュアー
 
 ```markdown
 ---
 name: security-reviewer
 description: セキュリティ脆弱性をレビューする
-tools: Read, Grep, Glob, Bash
+tools: Read, Grep, Glob
 model: opus
+maxTurns: 20
 ---
 
 セキュリティエンジニアとしてコードをレビューする:
@@ -210,11 +305,29 @@ model: opus
 
 使い方: `セキュリティレビュアーのサブエージェントを使ってこのコードをレビューして`
 
+### 例: 読み取り専用の調査エージェント
+
+```markdown
+---
+name: investigator
+description: コードベースを調査して報告する
+tools: Read, Grep, Glob
+permissionMode: plan
+memory: project
+---
+
+コードベースを調査し、結果をテキストで報告する。ファイルの変更は行わない。
+```
+
+`permissionMode: plan` で読み取り専用に制限。`memory: project` で調査結果をセッション間で記憶。
+
 ---
 
 ## 出典
 
 - [Skills 公式ドキュメント](https://code.claude.com/docs/en/skills)
-- [Hooks 公式ドキュメント](https://code.claude.com/docs/en/hooks-guide)
+- [Hooks 公式ドキュメント](https://code.claude.com/docs/en/hooks)
 - [Subagents 公式ドキュメント](https://code.claude.com/docs/en/sub-agents)
+- [Memory 公式ドキュメント](https://code.claude.com/docs/en/memory)
+- [Plugins 公式ドキュメント](https://code.claude.com/docs/en/plugins)
 - [Settings 公式ドキュメント](https://code.claude.com/docs/en/settings)

@@ -18,3 +18,5 @@
 - Test (single): `TODO`
 - Test (all): `TODO`
 - Lint: `TODO`
+
+変更後はテストを実行し、passを確認してから完了を報告すること。

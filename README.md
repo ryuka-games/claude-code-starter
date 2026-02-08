@@ -44,3 +44,4 @@ cd claude-starter
 | [調査ベストプラクティス](docs/guides/research-best-practices.md) | AI調査の方法論とSDD（Spec-Driven Development） |
 | [Boris Cherny Tips](docs/boris-cherny-tips.md) | Claude Code創設者のチーム実践Tips |
 | [生産性ガイド](docs/productivity-guide.md) | Claude Code全機能の包括的リファレンス |
+| [awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code) | スキル・フック・プラグイン等のコミュニティリソース集 |
