@@ -1,0 +1,27 @@
+# Personal Settings (CLAUDE.local.md)
+
+<!--
+  このファイルを CLAUDE.local.md にリネームして使う。
+  .gitignoreに含まれるので、チームに共有されない個人設定を書く場所。
+  チーム共通のルールは .claude/CLAUDE.md に書く。
+-->
+
+## 自分の開発環境
+
+<!--
+  ここに書くと、Claudeが「このURLで動作確認して」「このDBに接続して」等を
+  自分の環境に合わせて自動でやってくれる。人によって違う情報をここに書く。
+-->
+
+- Dev server: http://localhost:3000
+- DB: localhost:5432/mydb
+- Staging URL: https://staging.example.com
+
+## 自分の作業スタイル
+
+<!--
+  チーム共通ではないが、自分がClaudeにやってほしいことを書く。
+  例: コミットメッセージを英語で書いてほしい、説明を詳しくしてほしい、等。
+-->
+
+-
