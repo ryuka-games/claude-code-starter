@@ -18,6 +18,9 @@ process.stdin.on("end", () => {
     // Read snapshot, limit to 20KB
     const content = fs.readFileSync(snapshot, "utf8").slice(0, 20000);
 
+    // Clean up after reading
+    fs.unlinkSync(snapshot);
+
     const output = {
       hookSpecificOutput: {
         hookEventName: "SessionStart",

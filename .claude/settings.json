@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/save-context.js\""
+            "command": "node .claude/hooks/save-context.js"
           }
         ]
       }
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/restore-context.js\""
+            "command": "node .claude/hooks/restore-context.js"
           }
         ]
       }
