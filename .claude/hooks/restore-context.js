@@ -12,7 +12,7 @@ process.stdin.on("end", () => {
     // Only restore on compact (not startup/resume/clear)
     if (data.source !== "compact") process.exit(0);
 
-    const snapshot = path.join(data.cwd, ".claude", "CONTEXT-SNAPSHOT.jsonl");
+    const snapshot = path.join(data.cwd, ".claude", "CONTEXT-SNAPSHOT.md");
     if (!fs.existsSync(snapshot)) process.exit(0);
 
     // Read snapshot, limit to 20KB
