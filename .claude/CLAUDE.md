@@ -22,9 +22,7 @@ Claude Codeの開発効率を最大化するためのスターターキット・
 
 ## Working Plan
 
-進行中の計画ファイル: `~/.claude/plans/dapper-skipping-duckling.md`
-
-テンプレート基盤は完成。次フェーズとしてシステム開発用ワークフロー（調査→開発→リリース）のskills/agents構築を検討中。
+テンプレート基盤完成済み（CLAUDE.md, settings, skills, hooks, docs）。コンテキスト永続化hookもテンプレートに組み込み済み。
 
 ## Conventions
 
