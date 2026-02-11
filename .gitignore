@@ -3,3 +3,5 @@ CLAUDE.local.md
 .claude/settings.local.json
 .mcp.json
 .claude/CONTEXT-SNAPSHOT.jsonl
+.claude/CONTEXT-SNAPSHOT.md
+docs/articles/
