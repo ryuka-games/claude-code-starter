@@ -25,6 +25,7 @@ cd claude-starter
 | `.claude/hooks/` | コンテキスト永続化 + 回答完了/承認待ち通知 |
 | `.claude/skills/fix-issue/` | `/fix-issue 1234` でGitHub Issueを修正するスキル |
 | `.claude/skills/research/` | `/research [トピック]` で構造化された調査レポートを作成 |
+| `.claude/skills/spec/` | `/spec [機能説明]` で仕様書(SPEC.md)を生成。対話で練り上げる |
 | `.mcp.json.example` | MCP接続設定のサンプル |
 | `CLAUDE.local.md.example` | 個人設定のサンプル（git管理外） |
 
