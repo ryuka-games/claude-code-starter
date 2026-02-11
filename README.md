@@ -21,7 +21,8 @@ cd claude-starter
 | ファイル | 内容 |
 |---------|------|
 | `.claude/CLAUDE.md` | プロジェクト設定テンプレート。まずビルドコマンドだけ埋める |
-| `.claude/settings.json` | 安全なgitコマンドの自動承認 |
+| `.claude/settings.json` | 安全なgitコマンドの自動承認 + コンテキスト永続化hook設定 |
+| `.claude/hooks/` | コンテキスト圧縮時に作業文脈を自動保存・復元するhook |
 | `.claude/skills/fix-issue/` | `/fix-issue 1234` でGitHub Issueを修正するスキル |
 | `.claude/skills/research/` | `/research [トピック]` で構造化された調査レポートを作成 |
 | `.mcp.json.example` | MCP接続設定のサンプル |
@@ -33,7 +34,7 @@ cd claude-starter
 
 1. **Claudeがミスしたら** → 修正後に「CLAUDE.mdを更新して同じミスを繰り返すな」と言う
 2. **CLAUDE.mdが長くなってきたら** → 「CLAUDE.mdを見直して。不要なルールや重複を整理して」
-3. **hooks/rules/skills/agentsが必要になったら** → [カスタマイズガイド](docs/guides/customization.md)を見て追加する
+3. **rules/skills/agentsを追加したくなったら** → [カスタマイズガイド](docs/guides/customization.md)を見て追加する
 
 ## ドキュメント
 

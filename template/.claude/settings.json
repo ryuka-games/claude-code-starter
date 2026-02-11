@@ -8,5 +8,28 @@
       "Bash(git show *)"
     ],
     "deny": []
+  },
+  "hooks": {
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/save-context.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/restore-context.js"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -11,6 +11,7 @@
 | CLAUDE.mdを分割・参照したい | `@path/to/file` imports | [>>](#imports-でファイルを参照する) |
 | 危険なファイル編集をブロックしたい | hooks (PreToolUse) | [>>](#hooks-を追加する) |
 | AIでコードを自動評価したい | hooks (prompt/agent タイプ) | [>>](#hookタイプ) |
+| コンテキスト圧縮で文脈を失いたくない | hooks (PreCompact + SessionStart) | [>>](#例-コンテキスト圧縮時に作業文脈を保存復元する) |
 | 繰り返す作業を自動化したい | `.claude/skills/*/SKILL.md` | [>>](#skills-を追加する) |
 | スキルをサブエージェントで実行したい | SKILL.md に `context: fork` | [>>](#skill-frontmatter-フィールド一覧) |
 | 専門的なレビューを自動化したい | `.claude/agents/*.md` | [>>](#agents-を追加する) |
@@ -172,6 +173,149 @@ osascript -e 'display notification "タスク完了" with title "Claude Code"'
 # Linux: notify-send "Claude Code" "タスク完了"
 # Windows (PowerShell): [System.Windows.MessageBox]::Show("タスク完了")
 ```
+
+### 例: コンテキスト圧縮時に作業文脈を保存・復元する
+
+コンテキスト圧縮（compact）で直前の作業文脈が失われる問題を、PreCompact + SessionStartの2つのhookで解決する。
+
+**仕組み:**
+1. 圧縮前（PreCompact）→ transcriptから会話内容を抽出して保存
+2. 圧縮後のセッション開始（SessionStart, matcher: compact）→ 保存した内容を注入 → ファイル削除
+
+**`.claude/hooks/save-context.js`**（保存側）:
+```javascript
+#!/usr/bin/env node
+const fs = require("fs");
+const path = require("path");
+
+function extractEntry(line) {
+  try {
+    const data = JSON.parse(line);
+    if (!data.message || !data.message.content) return null;
+    const role = data.type;
+    const content = data.message.content;
+
+    if (role === "user") {
+      if (data.toolUseResult) return null; // tool結果はスキップ
+      const texts = [];
+      if (typeof content === "string") texts.push(content);
+      else if (Array.isArray(content)) {
+        for (const item of content) {
+          if (typeof item === "string") texts.push(item);
+          else if (item.type === "text" && item.text) texts.push(item.text);
+        }
+      }
+      return texts.length ? `[User] ${texts.join("\n")}` : null;
+    }
+
+    if (role === "assistant") {
+      const parts = [];
+      if (!Array.isArray(content)) return null;
+      for (const item of content) {
+        if (item.type === "text" && item.text) parts.push(item.text);
+        else if (item.type === "tool_use" && item.name) {
+          const brief = item.input?.description || item.input?.command?.slice(0, 80) || "";
+          parts.push(`[Tool: ${item.name}]${brief ? " " + brief : ""}`);
+        }
+        // thinking blocks, signatures はスキップ
+      }
+      return parts.length ? `[Assistant] ${parts.join("\n")}` : null;
+    }
+  } catch { return null; }
+  return null;
+}
+
+let input = "";
+process.stdin.on("data", (d) => (input += d));
+process.stdin.on("end", () => {
+  try {
+    const data = JSON.parse(input);
+    const transcript = data.transcript_path;
+    const cwd = data.cwd;
+    if (!transcript || !fs.existsSync(transcript)) process.exit(0);
+
+    const snapshot = path.join(cwd, ".claude", "CONTEXT-SNAPSHOT.md");
+    const raw = fs.readFileSync(transcript, "utf8");
+    const lines = raw.split("\n").filter((l) => l.trim());
+    const tail = lines.slice(-200);
+
+    const entries = [];
+    for (const line of tail) {
+      const entry = extractEntry(line);
+      if (entry) entries.push(entry);
+    }
+
+    let output = entries.join("\n\n");
+    if (output.length > 20000) {
+      output = output.slice(-20000);
+      const idx = output.indexOf("\n\n[");
+      if (idx > 0) output = output.slice(idx + 2);
+    }
+
+    fs.mkdirSync(path.dirname(snapshot), { recursive: true });
+    fs.writeFileSync(snapshot, output);
+  } catch { process.exit(0); }
+});
+```
+
+**`.claude/hooks/restore-context.js`**（復元側）:
+```javascript
+#!/usr/bin/env node
+const fs = require("fs");
+const path = require("path");
+
+let input = "";
+process.stdin.on("data", (d) => (input += d));
+process.stdin.on("end", () => {
+  try {
+    const data = JSON.parse(input);
+    if (data.source !== "compact") process.exit(0);
+
+    const snapshot = path.join(data.cwd, ".claude", "CONTEXT-SNAPSHOT.md");
+    if (!fs.existsSync(snapshot)) process.exit(0);
+
+    const content = fs.readFileSync(snapshot, "utf8").slice(0, 20000);
+    fs.unlinkSync(snapshot); // 読み取り後に削除
+
+    const output = {
+      hookSpecificOutput: {
+        hookEventName: "SessionStart",
+        additionalContext: [
+          "## Context from before compaction\n",
+          "Below is the recent transcript before context was compacted.",
+          "Use this to maintain continuity of the current task:\n",
+          content,
+        ].join("\n"),
+      },
+    };
+    console.log(JSON.stringify(output));
+  } catch { process.exit(0); }
+});
+```
+
+**`.claude/settings.json`**:
+```json
+{
+  "hooks": {
+    "PreCompact": [
+      { "hooks": [{ "type": "command", "command": "node .claude/hooks/save-context.js" }] }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/restore-context.js" }]
+      }
+    ]
+  }
+}
+```
+
+**ポイント:**
+- Node.jsなのでWindows/Mac/Linux共通で動く
+- transcript JSONLからthinking block・signature・tool結果を除去し、会話の本質だけ抽出
+- 20KB上限で注入サイズを制御
+- 復元後にスナップショットを自動削除（ファイルが残らない）
+- `.gitignore` に `CONTEXT-SNAPSHOT.md` を追加しておく
 
 ---
 

@@ -20,7 +20,14 @@ template/内のファイルは特定の言語やフレームワークに依存�
 - 最小限で始めて使いながら育てる。「とりあえず入れておく」はやらない
 - Build & Test Commands のみ。他のセクションは必要になったらClaude自身に追加させる
 - 「消したらClaudeがミスするか？NOなら削除」ルールを冒頭に記載
-- hooks/rules/agentsは初期テンプレートに含めない（必要時にcustomization.mdを参照して追加）
+- rules/agentsは初期テンプレートに含めない（必要時にcustomization.mdを参照して追加）
+
+### コンテキスト永続化hook（2025-02追加）
+- PreCompact + SessionStartのhookペアをテンプレートに含める
+- 理由: コンテキスト圧縮時の文脈喪失は全ユーザー共通の問題（コミュニティ調査で確認）。Boris基準「消したらClaudeがミスするか？」→ YESに該当
+- Node.jsスクリプトでクロスプラットフォーム対応（bash+jq依存を回避）
+- transcript JSONLをパースして構造化抽出（thinking block・signature除去）
+- 復元後にスナップショットを自動削除（ファイルが残らない設計）
 
 ## 理由
 - テンプレートリポジトリ方式により、`setup.sh`一発で新プロジェクトにClaude Code設定を導入できる
