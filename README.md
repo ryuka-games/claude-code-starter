@@ -16,6 +16,19 @@ cd claude-starter
 # あとは使いながら育てる
 ```
 
+### Windows の場合
+
+PowerShellの`bash`はWSLを呼ぶため、Git Bashを明示的に指定する:
+
+```powershell
+# PowerShellから実行する場合
+"C:\Program Files\Git\bin\bash.exe" C:\path\to\claude-starter\setup.sh C:\path\to\your-project
+
+# Git Bashターミナルから実行する場合
+cd /c/path/to/claude-starter
+./setup.sh /c/path/to/your-project
+```
+
 ## コピーされるもの
 
 | ファイル | 内容 |
