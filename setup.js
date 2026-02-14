@@ -50,10 +50,6 @@ if (fs.existsSync(targetGitignore)) {
 
 // サンプルファイルをコピー
 fs.copyFileSync(
-  path.join(templateDir, ".mcp.json.example"),
-  path.join(resolved, ".mcp.json.example")
-);
-fs.copyFileSync(
   path.join(templateDir, "CLAUDE.local.md.example"),
   path.join(resolved, "CLAUDE.local.md.example")
 );
@@ -64,6 +60,6 @@ console.log("=== セットアップ完了 ===");
 console.log("");
 console.log("次にやること:");
 console.log("  1. .claude/CLAUDE.md の Build & Test Commands を埋める");
-console.log("  2. 必要なら .mcp.json.example → .mcp.json にリネームしてトークンを設定");
-console.log("  3. 必要なら CLAUDE.local.md.example → CLAUDE.local.md にリネームして個人設定を追加");
+console.log("  2. 必要なら CLAUDE.local.md.example → CLAUDE.local.md にリネームして個人設定を追加");
+console.log("  3. gh CLI をインストールしておく (https://cli.github.com/)");
 console.log("  4. あとは使いながら育てる: ミスしたら「CLAUDE.mdを更新して同じミスを繰り返すな」");

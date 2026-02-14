@@ -35,7 +35,6 @@ else
 fi
 
 # サンプルファイルをコピー
-cp "$TEMPLATE_DIR/.mcp.json.example" "$TARGET_DIR/"
 cp "$TEMPLATE_DIR/CLAUDE.local.md.example" "$TARGET_DIR/"
 echo ">>> サンプルファイルをコピーしました"
 
@@ -44,6 +43,6 @@ echo "=== セットアップ完了 ==="
 echo ""
 echo "次にやること:"
 echo "  1. .claude/CLAUDE.md の Build & Test Commands を埋める"
-echo "  2. 必要なら .mcp.json.example → .mcp.json にリネームしてトークンを設定"
-echo "  3. 必要なら CLAUDE.local.md.example → CLAUDE.local.md にリネームして個人設定を追加"
+echo "  2. 必要なら CLAUDE.local.md.example → CLAUDE.local.md にリネームして個人設定を追加"
+echo "  3. gh CLI をインストールしておく (https://cli.github.com/)"
 echo "  4. あとは使いながら育てる: ミスしたら「CLAUDE.mdを更新して同じミスを繰り返すな」"
