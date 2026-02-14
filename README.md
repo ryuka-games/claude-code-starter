@@ -8,26 +8,15 @@
 # 1. このリポジトリをクローン
 git clone https://github.com/ryuka-games/claude-code-starter.git claude-starter
 
-# 2. セットアップスクリプトを実行
+# 2. セットアップスクリプトを実行（Node.js版 — 全OS対応）
 cd claude-starter
-./setup.sh ~/projects/my-app
+node setup.js ~/projects/my-app
 
 # 3. CLAUDE.md のビルドコマンドを埋める
 # あとは使いながら育てる
 ```
 
-### Windows の場合
-
-PowerShellの`bash`はWSLを呼ぶため、Git Bashを明示的に指定する:
-
-```powershell
-# PowerShellから実行する場合
-"C:\Program Files\Git\bin\bash.exe" C:\path\to\claude-starter\setup.sh C:\path\to\your-project
-
-# Git Bashターミナルから実行する場合
-cd /c/path/to/claude-starter
-./setup.sh /c/path/to/your-project
-```
+> **bash版** (`setup.sh`) もあるが、WindowsではWSLが呼ばれる問題があるため `setup.js` を推奨。
 
 ## コピーされるもの
 
