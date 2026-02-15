@@ -41,8 +41,13 @@ const targetGitignore = path.join(resolved, ".gitignore");
 const appendContent = fs.readFileSync(appendFile, "utf-8");
 
 if (fs.existsSync(targetGitignore)) {
-  fs.appendFileSync(targetGitignore, "\n" + appendContent);
-  console.log(">>> .gitignore に追記しました");
+  const existing = fs.readFileSync(targetGitignore, "utf-8");
+  if (existing.includes("CLAUDE.local.md")) {
+    console.log(">>> .gitignore は追記済みのためスキップ");
+  } else {
+    fs.appendFileSync(targetGitignore, "\n" + appendContent);
+    console.log(">>> .gitignore に追記しました");
+  }
 } else {
   fs.writeFileSync(targetGitignore, appendContent);
   console.log(">>> .gitignore を作成しました");

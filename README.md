@@ -26,7 +26,7 @@ node setup.js ~/projects/my-app
 | `.claude/settings.json` | 安全なgitコマンドの自動承認 + hook設定 |
 | `.claude/hooks/` | コンテキスト永続化 + 回答完了/承認待ち通知 |
 | `.claude/skills/fix-issue/` | `/fix-issue 1234` でGitHub Issueを修正するスキル |
-| `.claude/skills/research/` | `/research [トピック]` で構造化された調査レポートを作成 |
+| `.claude/skills/research/` | `/research [トピック]` で調査レポートを `docs/research/` に蓄積 |
 | `.claude/skills/spec/` | `/spec [機能説明]` で仕様書(SPEC.md)を生成。対話で練り上げる |
 | `CLAUDE.local.md.example` | 個人設定のサンプル（git管理外） |
 

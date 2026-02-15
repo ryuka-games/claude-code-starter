@@ -1,19 +1,28 @@
 ---
 name: research
-description: Research a topic and produce a structured RESEARCH.md report
+description: Research a topic and produce a structured report in docs/research/
 disable-model-invocation: true
 argument-hint: "[topic or question]"
 ---
 
-Research the following topic and write findings to RESEARCH.md: $ARGUMENTS
+Research the following topic and write findings to docs/research/: $ARGUMENTS
+
+## Step 0: Scope check (MANDATORY — do NOT skip)
+
+Before ANY research, list the independent concerns in the topic. Two concerns are "independent" if the answer to one does not affect the answer to the other (e.g., "competitor landscape" vs "which CLI framework to use").
+
+If 2+ independent concerns are found:
+1. List them explicitly to the user
+2. Split into separate `/research` calls by default (one topic per report)
+3. Only merge into a single report if the user explicitly requests it
 
 ## Step 1: Determine research type
 
 Classify the topic into one of three types. This determines what to investigate and how to split subagent work.
 
 ### Market/Competitive
-- **Focus**: market size, competitors, trends, positioning, SWOT
-- **Subagent split**: (A) competitor landscape, (B) market trends/sizing, (C) user needs/pain points
+- **Focus**: competitors, trends, positioning, differentiators
+- **Subagent split**: (A) competitor landscape, (B) market trends, (C) user needs/pain points
 - **Key sources**: web search, industry reports, competitor websites
 
 ### Tech Selection
@@ -41,37 +50,65 @@ After collecting subagent results, verify before writing the report:
 - **Features/APIs**: Check official documentation pages directly
 - Mark each fact as: verified / unverified / inferred
 
-## Step 4: Write report
+## Step 4: Challenge conclusions
 
-Write RESEARCH.md using the format below. Keep it concise -- the Executive Summary alone should be enough to make decisions.
+Before writing, critically review your own findings:
+- **Confirmation bias**: Did you only collect evidence that supports one conclusion? Actively search for counterarguments.
+- **Logical leaps**: Does each conclusion follow from the evidence, or are there gaps?
+- **Missing perspectives**: What viewpoint or alternative did you not investigate?
+- If any issue is found, go back and research the gap before proceeding.
+
+## Step 5: Write report
+
+Determine the next available number by checking existing files in docs/research/ (e.g., 001, 002...).
+Create docs/research/ directory if it doesn't exist.
+Write the report to `docs/research/NNN-[topic-slug].md`.
+
+### Format
 
 ```markdown
-# Research Report: [Topic]
+# [Content-based title, not "Research Report"]
 
-## 1. Executive Summary
-(3-5 lines. Actionable conclusions only. A reader should be able to decide next steps from this section alone.)
+## Summary
 
-## 2. Findings
-Structure by sub-topic using tables. For each finding, include a confidence column:
-| Finding | Detail | Confidence |
-|---------|--------|:----------:|
-| ...     | ...    | verified / unverified / inferred |
+**結論**: (1行で結論)
+**推奨アクション**: (1行で次にやること)
+**根拠**: (1行で最大の理由)
 
-## 3. Recommendations
-Use this format for each recommendation:
-| # | What to change | How to change it | Why |
-|---|----------------|-----------------|-----|
+## [Content-based heading for finding 1]
 
-## 4. Next Steps
-(End with: create SPEC.md from these findings)
+(Each section starts with **bold conclusion**, then supporting evidence below.)
 
-## 5. Sources
+| Item | Detail | Confidence |
+|------|--------|:----------:|
+| ...  | ...    | verified / unverified / inferred |
+
+## [Content-based heading for finding 2]
+
+...
+
+## Recommendations
+
+| # | What | How | Why |
+|---|------|-----|-----|
+
+## Sources
+
 (Only URLs confirmed to exist via WebFetch or gh)
 ```
 
+### Format rules
+
+- **Keep each section concise.** Reader should get the point from bold conclusions alone, without reading tables.
+- **Section headings must describe content** (e.g., "CLI フレームワーク3候補の比較" not "Findings")
+- **Tables: max 6 columns.** Drop low-value columns (e.g., Confidence can be footnotes if most items are verified).
+- **Executive Summary → "Summary"** with 3 fixed elements: 結論 / 推奨アクション / 根拠
+- Confidence marking: use only where genuinely uncertain. Don't mark every row.
+
 ## Rules
 
-- If RESEARCH.md already exists, use RESEARCH-[topic-slug].md
-- Never state uncertain information as fact. Use the confidence system
+- Always output to docs/research/NNN-[topic-slug].md (never to the repo root)
+- Step 0 is mandatory. Never skip scope check, even when reformatting existing content
+- Never state uncertain information as fact
 - Prefer tables over prose for scannability
 - Do not pad the report -- shorter is better if the content is complete
