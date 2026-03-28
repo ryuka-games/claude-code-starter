@@ -44,6 +44,7 @@ node setup.js ~/projects/my-app
 
 | ファイル | 内容 |
 |---------|------|
+| [AI開発ワークフロー](docs/guides/workflow.md) | /research → /spec → /challenge → /plan → /agent-teams → テスト → レビューの全体像 |
 | [プロンプト チートシート](docs/guides/prompt-cheatsheet.md) | 場面別の効果的なプロンプト集 |
 | [カスタマイズガイド](docs/guides/customization.md) | hooks/rules/skills/agentsの追加方法 |
 | [調査ベストプラクティス](docs/guides/research-best-practices.md) | AI調査の方法論とSDD（Spec-Driven Development） |
