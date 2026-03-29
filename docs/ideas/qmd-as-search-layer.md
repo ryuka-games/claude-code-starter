@@ -3,8 +3,8 @@ date: 2026-03-28
 source: "自分のアイデア（qmd調査後に発想）"
 tags: [qmd, search, knowledge-management]
 related:
-  - ../decisions/knowledge-management-structure.md
-  - knowledge-visualization.md
+  - "[ナレッジ管理の設計](../decisions/knowledge-management-structure.md)"
+  - "[可視化構想](knowledge-visualization.md)"
 ---
 
 # qmdの仕組みと/noteへの活かし方

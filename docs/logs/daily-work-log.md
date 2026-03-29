@@ -3,8 +3,8 @@ date: 2026-03-28
 source: "自分の作業記録"
 tags: [work-log, skills, articles]
 related:
-  - ../decisions/knowledge-management-structure.md
-  - ../ideas/qmd-as-search-layer.md
+  - "[ナレッジ管理の設計](../decisions/knowledge-management-structure.md)"
+  - "[qmdの仕組みと活かし方](../ideas/qmd-as-search-layer.md)"
 ---
 
 # 日々の作業ログ

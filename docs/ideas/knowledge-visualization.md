@@ -3,8 +3,8 @@ date: 2026-03-28
 source: "自分のアイデア（ナレッジ管理設計の議論中に発想）"
 tags: [visualization, knowledge-management, graph-view]
 related:
-  - ../decisions/knowledge-management-structure.md
-  - qmd-as-search-layer.md
+  - "[ナレッジ管理の設計](../decisions/knowledge-management-structure.md)"
+  - "[qmdの仕組みと活かし方](qmd-as-search-layer.md)"
 ---
 
 # ナレッジベースの上にObsidian的グラフビューを載せたい

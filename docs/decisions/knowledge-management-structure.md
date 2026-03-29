@@ -3,8 +3,8 @@ date: 2026-03-28
 source: "打合せ（ナレッジ管理の設計議論）"
 tags: [knowledge-management, note-skill, folder-structure]
 related:
-  - ../ideas/knowledge-visualization.md
-  - ../ideas/qmd-as-search-layer.md
+  - "[可視化構想](../ideas/knowledge-visualization.md)"
+  - "[qmdの仕組みと活かし方](../ideas/qmd-as-search-layer.md)"
 ---
 
 # ナレッジ管理を4フォルダ+追記デフォルトで設計した

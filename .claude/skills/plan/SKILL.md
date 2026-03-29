@@ -78,6 +78,9 @@ Output path: `specs/features/<feature-name>/tasks.md`
 
 ### Phase N: 仕上げ
 - [ ] Task N: ...
+
+### Phase N+1: 振り返り
+- [ ] Task N+1: 振り返りを実施し、retro.mdに記録（良かった点・問題点・次回の改善案）
 ```
 
 **`[P]` マーカー**: 並列実行可能なタスク。worktreeで同時に進められる。

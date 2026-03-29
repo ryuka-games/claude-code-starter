@@ -3,7 +3,7 @@ date: 2026-03-28
 source: "自分の判断（公式プラグイン調査後）"
 tags: [code-review, plugin, workflow]
 related:
-  - ../ideas/qmd-as-search-layer.md
+  - "[qmdの仕組みと活かし方](../ideas/qmd-as-search-layer.md)"
 ---
 
 # コードレビューは公式プラグインに任せる

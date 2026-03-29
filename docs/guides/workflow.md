@@ -3,16 +3,18 @@
 ## フロー全体像
 
 ```
-/research → /spec → /challenge → /plan → /agent-teams → /test-it → /test-e2e → 人(モンキーテスト)
-                       ↑
-                   /red-team
+/note(蓄積) → /checker(任意) → /spec → /challenge → /plan → /agent-teams → /test-it → /test-e2e → 人(モンキーテスト)
+  ↑ /research                      ↑
+                                /red-team
 ```
 
 ## 各スキルの役割
 
 | スキル | 何をするか | 入力 | 出力 |
 |--------|-----------|------|------|
+| `/note` | 情報をドキュメントとして整理・蓄積 | テキスト, ファイルパス, or 対話 | `docs/`配下の5フォルダ |
 | `/research` | トピックを調査してレポートを作成 | トピック or 質問 | `docs/research/NNN-slug.md` |
+| `/checker` | specに渡す情報が揃っているかVETチェック | 機能名 or 説明 | ギャップレポート |
 | `/spec` | 仕様書を対話で練り上げる | 機能説明 | `specs/features/<feature>/spec.md` |
 | `/challenge` | 仕様・設計・記事を多角的に反証する | ファイルパス | `CHALLENGE.md` |
 | `/red-team` | 悪意ある視点で仕様を攻撃する | ファイルパス | `RED-TEAM.md` |
@@ -46,16 +48,18 @@
 ### 新機能を作る
 
 ```
-1. /research で技術調査（必要なら）
-2. /spec で仕様を作成
-3. /challenge で仕様の穴を反証
-4. /red-team でユーザー向け機能の悪用を検証（必要なら）
-5. /plan で実装計画を作成
-6. /agent-teams で実装
-7. /test-it で結合テスト
-8. /test-e2e でE2E煙テスト（必要なら）
-9. /code-review:code-review でPRレビュー
-10. 人がモンキーテスト
+1. /note で打合せメモ、アイデア、調査結果を蓄積
+2. /research で技術調査（必要なら）→ 結果を /note でドキュメント化
+3. /checker でspecに渡す情報が揃ってるか確認（任意）
+4. /spec で仕様を作成
+5. /challenge で仕様の穴を反証
+6. /red-team でユーザー向け機能の悪用を検証（必要なら）
+7. /plan で実装計画を作成
+8. /agent-teams で実装
+9. /test-it で結合テスト
+10. /test-e2e でE2E煙テスト（必要なら）
+11. /code-review:code-review でPRレビュー
+12. 人がモンキーテスト
 ```
 
 ### 既存機能を変更する
@@ -67,6 +71,15 @@
 4. /agent-teams で実装（PMの完了報告に再テスト対象を含める）
 5. /test-it で該当featureの結合テスト再実行
 6. /code-review:code-review でPRレビュー
+```
+
+### テストでバグが見つかったら
+
+```
+1. バグを修正
+2. /test-it で再テスト（修正が他の箇所に影響していないか確認）
+3. 必要なら /test-e2e も再実行
+4. 全pass確認後、/code-review:code-review でPRレビュー
 ```
 
 ### 記事を書く
